@@ -19,7 +19,6 @@
         ignores = [ ".swp" ];
         userEmail = "jakub@vlayer.xyz";
         userName = "Jakub Konka";
-        signing.signByDefault = true;
       };
     };
   };

@@ -25,7 +25,16 @@
         nix.settings.experimental-features = "nix-command flakes";
 
         # Enable alternative shell support in nix-darwin.
-        programs.fish.enable = true;
+        programs.fish = {
+          enable = true;
+          shellInit = ''
+            for p in /run/current-system/sw/bin
+              if not contains $p $fish_user_paths
+                set -g fish_user_paths $p $fish_user_paths
+              end
+            end
+          '';
+        };
         users.knownUsers = [ "kubkon" ];
         users.users.kubkon = {
           uid = 501;
