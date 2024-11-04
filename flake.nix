@@ -33,6 +33,7 @@
                 set -g fish_user_paths $p $fish_user_paths
               end
             end
+            eval "$(/opt/homebrew/bin/brew shellenv)"
           '';
         };
         users.knownUsers = [ "kubkon" ];
@@ -40,6 +41,13 @@
           uid = 501;
           shell = pkgs.fish;
           home = "/Users/kubkon";
+        };
+
+        homebrew = {
+          enable = true;
+          taps = [];
+          brews = [ "openssh" "ykman" ];
+          casks = [];
         };
 
         # Set Git commit hash for darwin-version.
