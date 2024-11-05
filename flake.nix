@@ -15,6 +15,8 @@
         environment.systemPackages = [
           pkgs.fish 
           pkgs.yubico-piv-tool
+          pkgs.ripgrep
+          pkgs.rustfmt
         ];
 
         # Auto upgrade nix package and the daemon service.
@@ -47,7 +49,7 @@
           enable = true;
           taps = [];
           brews = [ "openssh" "ykman" ];
-          casks = [];
+          casks = [ "kitty" ];
         };
 
         # Set Git commit hash for darwin-version.
@@ -116,6 +118,21 @@
                   enable = true;
                   installRustc = true;
                   installCargo = true;
+                  settings = {
+                    checkOnSave = true;
+                    check = {
+                      command = "clippy";
+                    };
+                    # inlayHints = {
+                    #   enable = true;
+                    #   showParameterNames = true;
+                    #   parameterHintsPrefix = "<- ";
+                    #   otherHintsPrefix = "=> ";
+                    # };
+                    procMacro = {
+                      enable = true;
+                    };
+                  };
                 };
               };
             };
@@ -176,6 +193,18 @@
             treesitter.enable = true;
             commentary.enable = true;
             zig.enable = true;
+
+            conform-nvim = {
+              enable = true;
+              settings = { 
+                format_on_save = {
+                  lsp_fallback = "fallback";
+                  timeout_ms = 500;
+                };
+                notify_on_error = true;
+                formatters_by_ft.rust = [ "rustfmt" ];
+              };
+            };
           };
 
           extraConfigLua = ''
