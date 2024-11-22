@@ -130,6 +130,7 @@
 
             lsp = {
               enable = true;
+              inlayHints = true;
               servers = {
                 eslint.enable = true;
                 zls.enable = true;
@@ -250,27 +251,37 @@
             conform-nvim = {
               enable = true;
               settings = {
-                notifyOnError = false;
-                formattersByFt = {
+                notify_on_error = false;
+                formatters_by_ft = {
                   rust = [ "cargo" "fmt" ];
+                };
+                format_on_save = {
+                  lsp_fallback = true;
+                  timeout_ms = 500;
                 };
               };
             };
 
             rustaceanvim = {
               enable = true;
-              rustAnalyzerPackage = null;
               settings = {
-                tools.enable_clippy = true;
-                check = {
-                  command = "clippy";
-                };
-                cargo = {
-                  allFeatures = true;
-                };
-                inlayHints = { 
-                  lifetimeElisionHints = { 
-                    enable = "always";
+                rustAnalyzerPackage = null;
+                tools.clippy_enable = true;
+                server = {
+                  default_settings = {
+                    rust-analyzer = {
+                      cargo = { 
+                        allFeatures = true;
+                      };
+                      check = {
+                        command = "clippy";
+                      };
+                    };
+                    inlayHints = { 
+                      lifetimeElisionHints = { 
+                        enable = "always";
+                      };
+                    };
                   };
                 };
               };
