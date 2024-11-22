@@ -17,6 +17,9 @@
           pkgs.yubico-piv-tool
           pkgs.ripgrep
           pkgs.rustfmt
+          pkgs.tree
+          pkgs.bloaty
+          pkgs.pstree
         ];
 
         # Auto upgrade nix package and the daemon service.
@@ -48,7 +51,7 @@
         homebrew = {
           enable = true;
           taps = [];
-          brews = [ "openssh" "ykman" ];
+          brews = [ "openssh" "ykman" "llvm" ];
           casks = [ "kitty" ];
         };
 
@@ -108,6 +111,21 @@
             telescope = {
               enable = true;
               extensions = { fzf-native = { enable = true; }; };
+            };
+
+            harpoon = {
+              enable = true;
+              enableTelescope = true;
+              keymaps = {
+                addFile = "<leader>a";
+                toggleQuickMenu = "<C-o>";
+                navFile = {
+                  "1" = "<C-h>";
+                  "2" = "<C-n>";
+                  "3" = "<C-e>";
+                  "4" = "<C-i>";
+                };
+              };
             };
 
             lsp = {

@@ -6,7 +6,12 @@
     users.kubkon = {
       home.username = "kubkon";
       home.stateVersion = "24.05";
+      home.sessionVariables = {
+        EDITOR = "nvim";
+      };
 
+      programs.direnv.enable = true;
+      programs.direnv.nix-direnv.enable = true;
       programs.fish.enable = true;
 
       programs.ssh = {
