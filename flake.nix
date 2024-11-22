@@ -131,34 +131,71 @@
             lsp = {
               enable = true;
               servers = {
+                eslint.enable = true;
                 zls.enable = true;
-                rust_analyzer = {
-                  enable = true;
-                  installRustc = true;
-                  installCargo = true;
-                  settings = {
-                    checkOnSave = true;
-                    check = {
-                      command = "clippy";
-                    };
-                    # inlayHints = {
-                    #   enable = true;
-                    #   showParameterNames = true;
-                    #   parameterHintsPrefix = "<- ";
-                    #   otherHintsPrefix = "=> ";
-                    # };
-                    procMacro = {
-                      enable = true;
-                    };
-                  };
+              };
+              keymaps = {
+                diagnostic = {
+                  "<leader>E" = "open_float";
+                  "[" = "goto_prev";
+                  "]" = "goto_next";
+                  "<leader>do" = "setloclist";
+                };
+                lspBuf = {
+                  "K" = "hover";
+                  "gD" = "declaration";
+                  "gd" = "definition";
+                  "gr" = "references";
+                  "gI" = "implementation";
+                  "gy" = "type_definition";
+                  "<leader>ca" = "code_action";
+                  "<leader>cr" = "rename";
+                  "<leader>wl" = "list_workspace_folders";
+                  "<leader>wr" = "remove_workspace_folder";
+                  "<leader>wa" = "add_workspace_folder";
+                  "<C-k>" = "signature_help";
                 };
               };
+              preConfig = ''
+                vim.diagnostic.config({
+                    virtual_text = false,
+                    signs = true,
+                    update_in_insert = true,
+                    underline = true,
+                    severity_sort = false,
+                    float = {
+                        border = 'rounded',
+                        source = 'always',
+                        header = "",
+                        prefix = "",
+                    },
+                })
+
+                vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
+                  vim.lsp.handlers.hover,
+                  {border = 'rounded'}
+                )
+
+                vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+                  vim.lsp.handlers.signature_help,
+                  {border = 'rounded'}
+                )
+              '';
+              postConfig = ''
+                local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+                for type, icon in pairs(signs) do
+                  local hl = "DiagnosticSign" .. type
+                  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+                end
+              '';
             };
 
             cmp = {
               enable = true;
               settings = {
-                completion = { completeopt = "menu,menuone,noinsert"; };
+                completion = {
+                  completeopt = "menu,menuone,noinsert";
+                };
                 autoEnableSources = true;
                 experimental = { ghost_text = true; };
                 performance = {
@@ -187,8 +224,7 @@
                 };
 
                 mapping = {
-                  "<Tab>" =
-                    "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
+                  "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
                   "<C-j>" = "cmp.mapping.select_next_item()";
                   "<C-k>" = "cmp.mapping.select_prev_item()";
                   "<C-e>" = "cmp.mapping.abort()";
@@ -196,8 +232,7 @@
                   "<C-f>" = "cmp.mapping.scroll_docs(4)";
                   "<C-Space>" = "cmp.mapping.complete()";
                   "<CR>" = "cmp.mapping.confirm({ select = true })";
-                  "<S-CR>" =
-                    "cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })";
+                  "<S-CR>" = "cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })";
                 };
               };
             };
@@ -214,82 +249,43 @@
 
             conform-nvim = {
               enable = true;
-              settings = { 
-                format_on_save = {
-                  lsp_fallback = "fallback";
-                  timeout_ms = 500;
+              settings = {
+                notifyOnError = false;
+                formattersByFt = {
+                  rust = [ "cargo" "fmt" ];
                 };
-                notify_on_error = true;
-                formatters_by_ft.rust = [ "rustfmt" ];
               };
             };
+
+            rustaceanvim = {
+              enable = true;
+              rustAnalyzerPackage = null;
+              settings = {
+                tools.enable_clippy = true;
+                check = {
+                  command = "clippy";
+                };
+                cargo = {
+                  allFeatures = true;
+                };
+                inlayHints = { 
+                  lifetimeElisionHints = { 
+                    enable = "always";
+                  };
+                };
+              };
+            };
+
+            typescript-tools = {
+              enable = true;
+              settings.on_attach = ''
+                function(client, bufnr)
+                    client.server_capabilities.documentFormattingProvider = false
+                    client.server_capabilities.documentRangeFormattingProvider = false
+                end
+              '';
+            };
           };
-
-          extraConfigLua = ''
-            -- LSP Diagnostics Options Setup 
-            local sign = function(opts)
-              vim.fn.sign_define(opts.name, {
-                texthl = opts.name,
-                text = opts.text,
-                numhl = ""
-              })
-            end
-
-            sign({ name = 'DiagnosticSignError', text = '' })
-            sign({ name = 'DiagnosticSignWarn', text = '' })
-            sign({ name = 'DiagnosticSignHint', text = '' })
-            sign({ name = 'DiagnosticSignInfo', text = '' })
-
-            vim.diagnostic.config({
-                virtual_text = false,
-                signs = true,
-                update_in_insert = true,
-                underline = true,
-                severity_sort = false,
-                float = {
-                    border = 'rounded',
-                    source = 'always',
-                    header = "",
-                    prefix = "",
-                },
-            })
-
-            vim.cmd([[
-            set signcolumn=yes
-            autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
-            ]])
-
-            -- Use LspAttach autocommand to only map the following keys
-            -- after the language server attaches to the current buffer
-            vim.api.nvim_create_autocmd('LspAttach', {
-              group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-              callback = function(ev)
-                -- Enable completion triggered by <c-x><c-o>
-                vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-                -- Buffer local mappings.
-                -- See `:help vim.lsp.*` for documentation on any of the below functions
-                local opts = { buffer = ev.buf }
-                vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-                vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-                vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-                vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-                vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-                vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-                vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-                vim.keymap.set('n', '<space>wl', function()
-                  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-                end, opts)
-                vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-                vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-                vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-                vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-                vim.keymap.set('n', '<space>f', function()
-                  vim.lsp.buf.format { async = true }
-                end, opts)
-              end,
-            })
-          '';
         };
       };
 
