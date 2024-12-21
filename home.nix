@@ -35,7 +35,7 @@
         };
       };
 
-      home.file."~/.config/ghostty".text = ''
+      home.file.".config/ghostty".text = ''
       font-size = 12
       background = 282828
       foreground = dedede
