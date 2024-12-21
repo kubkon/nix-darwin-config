@@ -11,6 +11,14 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, nixvim, home-manager }:
     let
+      whois = {
+        username = "kubkon";
+        systemName = "byakuya";
+        name = "Jakub Konka";
+        email = "kubkon@jakubkonka.com";
+        verifyGitCommits = false;
+      };
+
       configuration = { pkgs, ... }: {
         environment.systemPackages = [
           pkgs.fish 
@@ -41,11 +49,11 @@
             end
           '';
         };
-        users.knownUsers = [ "kubkon" ];
-        users.users.kubkon = {
+        users.knownUsers = [ "${whois.username}" ];
+        users.users.${whois.username} = {
           uid = 501;
           shell = pkgs.fish;
-          home = "/Users/kubkon";
+          home = "/Users/${whois.username}";
         };
 
         # Set Git commit hash for darwin-version.
@@ -298,13 +306,14 @@
     in {
       # Build darwin flake using:
       # $ darwin-rebuild build --flake .#main
-      darwinConfigurations."zkkubkon" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."${whois.systemName}" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [ 
           configuration 
           nixvim.nixDarwinModules.nixvim
           home-manager.darwinModules.home-manager (import ./home.nix)
         ];
+        specialArgs = { inherit whois inputs self; };
       };
 
       # Expose the package set, including overlays, for convenience.
