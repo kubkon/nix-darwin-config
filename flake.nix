@@ -78,8 +78,8 @@
         system = "aarch64-darwin";
         modules = [ 
           configuration 
-          nixvim.nixDarwinModules.nixvim (import ./nvim.nix)
-          home-manager.darwinModules.home-manager (import ./home.nix)
+          nixvim.nixDarwinModules.nixvim (import ./modules/nvim.nix)
+          home-manager.darwinModules.home-manager (import ./modules/home.nix)
         ];
         specialArgs = { inherit whois inputs self; };
       };
