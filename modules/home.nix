@@ -12,7 +12,15 @@
 
       programs.direnv.enable = true;
       programs.direnv.nix-direnv.enable = true;
-      programs.fish.enable = true;
+
+      programs.fish = {
+        enable = true;
+        plugins = [
+          { name = "grc"; src = pkgs.fishPlugins.grc.src; }
+          { name = "fzf-fish"; src = pkgs.fishPlugins.fzf-fish.src; }
+          { name = "hydro"; src = pkgs.fishPlugins.hydro.src; }
+        ];
+      };
 
       programs.ssh = {
         enable = true;

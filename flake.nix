@@ -29,6 +29,9 @@
           pkgs.bloaty
           pkgs.pstree
           pkgs.openssh
+          pkgs.fzf
+          pkgs.grc
+          pkgs.git
         ];
 
         # Auto upgrade nix package and the daemon service.
