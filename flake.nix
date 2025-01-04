@@ -11,17 +11,36 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, nixvim, home-manager }:
     let
-      whois = {
+      byakuya = {
         username = "kubkon";
         systemName = "byakuya";
         name = "Jakub Konka";
         email = "kubkon@jakubkonka.com";
-        verifyGitCommits = false;
+        git.extraConfig = {
+          # Sign all commits
+          commit.gpgsign = true;
+          gpg.format = "openpgp";
+          user.signingkey = "DCEE0CE2";
+        };
       };
+      zkkubkon = {
+        username = "kubkon";
+        systemName = "zkkubkon";
+        name = "Jakub Konka";
+        email = "jakub@vlayer.xyz";
+        git.extraConfig = {
+          # Sign all commits using ssh key
+          commit.gpgsign = true;
+          gpg.format = "ssh";
+          gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
+          user.signingkey = "~/.ssh/id_ed25519_sk.pub";
+        };
+      };
+      whois = byakuya;
 
       configuration = { pkgs, ... }: {
         environment.systemPackages = [
-          pkgs.fish 
+          pkgs.fish
           pkgs.yubico-piv-tool
           pkgs.ripgrep
           pkgs.rustfmt
@@ -32,6 +51,8 @@
           pkgs.fzf
           pkgs.grc
           pkgs.git
+          pkgs.helix
+          pkgs.nixfmt
         ];
 
         # Auto upgrade nix package and the daemon service.
@@ -79,10 +100,12 @@
       # $ darwin-rebuild build --flake .#main
       darwinConfigurations."${whois.systemName}" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        modules = [ 
-          configuration 
-          nixvim.nixDarwinModules.nixvim (import ./modules/nvim.nix)
-          home-manager.darwinModules.home-manager (import ./modules/home.nix)
+        modules = [
+          configuration
+          nixvim.nixDarwinModules.nixvim
+          (import ./modules/nvim.nix)
+          home-manager.darwinModules.home-manager
+          (import ./modules/home.nix)
         ];
         specialArgs = { inherit whois inputs self; };
       };
