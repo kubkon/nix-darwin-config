@@ -5,7 +5,6 @@
     users.kubkon = {
       home.username = "${whois.username}";
       home.stateVersion = "24.11";
-      home.sessionVariables = { EDITOR = "nvim"; };
 
       programs.direnv.enable = true;
       programs.direnv.nix-direnv.enable = true;
@@ -56,6 +55,7 @@
 
       programs.helix = {
         enable = true;
+        defaultEditor = true;
         settings = {
           theme = "tokyonight";
           editor = {

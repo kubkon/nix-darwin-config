@@ -20,7 +20,7 @@
           # Sign all commits
           commit.gpgsign = true;
           gpg.format = "openpgp";
-          user.signingkey = "DCEE0CE2";
+          user.signingkey = "DCEE0CE2EE812D32942750663AEF55DD984C8344";
         };
       };
       zkkubkon = {
