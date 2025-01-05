@@ -69,23 +69,42 @@
               left = [
                 "mode"
                 "spinner"
+                "spacer"
                 "diagnostics"
                 "file-name"
                 "separator"
+                "spacer"
                 "version-control"
               ];
-              right = [ "position" "position-percentage" "total-line-numbers" ];
-              separator = "⌥ ";
+              right = [
+                "file-type"
+                "file-encoding"
+                "file-line-ending"
+                "position"
+                "position-percentage"
+                "total-line-numbers"
+              ];
+              separator = "⌥";
             };
             lsp = { display-inlay-hints = true; };
           };
 
         };
-        languages.language = [{
-          name = "nix";
-          auto-format = true;
-          formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
-        }];
+        languages = {
+          language = [{
+            name = "nix";
+            auto-format = true;
+            formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
+          }];
+          language-server = {
+            rust-analyzer = {
+              config = {
+                cargo = { allFeatures = true; };
+                check = { command = "clippy"; };
+              };
+            };
+          };
+        };
       };
     };
   };
