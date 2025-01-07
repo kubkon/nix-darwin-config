@@ -56,6 +56,7 @@
       programs.helix = {
         enable = true;
         defaultEditor = true;
+
         settings = {
           theme = "tokyonight";
           editor = {
@@ -89,13 +90,28 @@
             lsp = { display-inlay-hints = true; };
           };
 
+          keys = {
+            normal = {
+              V = [ "select_mode" "extend_to_line_bounds" ];
+              "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
+              "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
+            };
+
+            insert = {
+              esc = [ "collapse_selection" "normal_mode" ];
+              "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
+              "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
+            };
+          };
         };
+
         languages = {
           language = [{
             name = "nix";
             auto-format = true;
             formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
           }];
+
           language-server = {
             rust-analyzer = {
               config = {
