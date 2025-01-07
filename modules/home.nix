@@ -106,9 +106,22 @@
               V = [ "select_mode" "extend_to_line_bounds" ];
               "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
               "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
+              "*" = [
+                "move_char_right"
+                "move_prev_word_start"
+                "move_next_word_end"
+                "search_selection"
+                "search_next"
+              ];
+              esc = [ "collapse_selection" "keep_primary_selection" ];
             };
 
             insert = { esc = [ "collapse_selection" "normal_mode" ]; };
+
+            select = {
+              esc =
+                [ "collapse_selection" "keep_primary_selection" "normal_mode" ];
+            };
           };
         };
 
@@ -124,7 +137,10 @@
               config = {
                 cargo = { allFeatures = true; };
                 check = { command = "clippy"; };
-                procMacro = { enable = false; };
+                procMacro = {
+                  enable = true;
+                  ignored = { };
+                };
                 diagnostics = { disabled = [ "macro-error" ]; };
               };
             };
