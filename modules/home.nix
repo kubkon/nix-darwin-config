@@ -92,16 +92,23 @@
 
           keys = {
             normal = {
+              C = [
+                "extend_to_line_end"
+                "yank_main_selection_to_clipboard"
+                "delete_selection"
+                "insert_mode"
+              ];
+              D = [
+                "extend_to_line_end"
+                "yank_main_selection_to_clipboard"
+                "delete_selection"
+              ];
               V = [ "select_mode" "extend_to_line_bounds" ];
               "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
               "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
             };
 
-            insert = {
-              esc = [ "collapse_selection" "normal_mode" ];
-              "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
-              "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
-            };
+            insert = { esc = [ "collapse_selection" "normal_mode" ]; };
           };
         };
 
@@ -117,6 +124,8 @@
               config = {
                 cargo = { allFeatures = true; };
                 check = { command = "clippy"; };
+                procMacro = { enable = false; };
+                diagnostics = { disabled = [ "macro-error" ]; };
               };
             };
           };
