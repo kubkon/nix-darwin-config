@@ -121,6 +121,8 @@
             select = {
               esc =
                 [ "collapse_selection" "keep_primary_selection" "normal_mode" ];
+              "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
+              "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
             };
           };
         };
