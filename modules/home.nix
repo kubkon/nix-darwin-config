@@ -128,11 +128,21 @@
         };
 
         languages = {
-          language = [{
-            name = "nix";
-            auto-format = true;
-            formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
-          }];
+          language = [
+            {
+              name = "nix";
+              auto-format = true;
+              formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
+            }
+            {
+              name = "typescript";
+              auto-format = true;
+              formatter = {
+                command = "${pkgs.nodePackages_latest.prettier}/bin/prettier";
+                args = [ "--parser" "typescript" ];
+              };
+            }
+          ];
 
           language-server = {
             rust-analyzer = {
@@ -140,11 +150,17 @@
                 cargo = { allFeatures = true; };
                 check = { command = "clippy"; };
                 procMacro = {
-                  enable = true;
+                  enable = false;
                   ignored = { };
                 };
                 diagnostics = { disabled = [ "macro-error" ]; };
               };
+            };
+
+            typescript-language-server = {
+              command =
+                "${pkgs.typescript-language-server}/bin/typescript-language-server";
+              config.documentFormatting = false;
             };
           };
         };
