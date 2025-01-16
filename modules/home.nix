@@ -88,8 +88,8 @@
               separator = "⌥";
             };
             lsp = { display-inlay-hints = true; };
-            end-of-line-diagnostics = "hint";
-            inline-diagnostics = { cursor-line = "warning"; };
+            end-of-line-diagnostics = "disable";
+            inline-diagnostics = { cursor-line = "hint"; };
           };
 
           keys = {
