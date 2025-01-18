@@ -52,7 +52,6 @@
           pkgs.grc
           pkgs.git
           pkgs.helix
-          pkgs.nixfmt
         ];
 
         # Auto upgrade nix package and the daemon service.
