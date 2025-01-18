@@ -1,4 +1,10 @@
-{ pkgs, lib, whois, ... }: {
+{
+  pkgs,
+  lib,
+  whois,
+  ...
+}:
+{
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -87,9 +93,13 @@
               ];
               separator = "⌥";
             };
-            lsp = { display-inlay-hints = true; };
+            lsp = {
+              display-inlay-hints = true;
+            };
             end-of-line-diagnostics = "disable";
-            inline-diagnostics = { cursor-line = "hint"; };
+            inline-diagnostics = {
+              cursor-line = "hint";
+            };
           };
 
           keys = {
@@ -105,9 +115,18 @@
                 "yank_main_selection_to_clipboard"
                 "delete_selection"
               ];
-              V = [ "select_mode" "extend_to_line_bounds" ];
-              "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
-              "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
+              V = [
+                "select_mode"
+                "extend_to_line_bounds"
+              ];
+              "{" = [
+                "extend_to_line_bounds"
+                "goto_prev_paragraph"
+              ];
+              "}" = [
+                "extend_to_line_bounds"
+                "goto_next_paragraph"
+              ];
               "*" = [
                 "move_char_right"
                 "move_prev_word_start"
@@ -115,16 +134,33 @@
                 "search_selection"
                 "search_next"
               ];
-              esc = [ "collapse_selection" "keep_primary_selection" ];
+              esc = [
+                "collapse_selection"
+                "keep_primary_selection"
+              ];
             };
 
-            insert = { esc = [ "collapse_selection" "normal_mode" ]; };
+            insert = {
+              esc = [
+                "collapse_selection"
+                "normal_mode"
+              ];
+            };
 
             select = {
-              esc =
-                [ "collapse_selection" "keep_primary_selection" "normal_mode" ];
-              "{" = [ "extend_to_line_bounds" "goto_prev_paragraph" ];
-              "}" = [ "extend_to_line_bounds" "goto_next_paragraph" ];
+              esc = [
+                "collapse_selection"
+                "keep_primary_selection"
+                "normal_mode"
+              ];
+              "{" = [
+                "extend_to_line_bounds"
+                "goto_prev_paragraph"
+              ];
+              "}" = [
+                "extend_to_line_bounds"
+                "goto_next_paragraph"
+              ];
             };
           };
         };
@@ -140,8 +176,24 @@
               name = "typescript";
               auto-format = true;
               formatter = {
-                command = "${pkgs.nodePackages_latest.prettier}/bin/prettier";
-                args = [ "--parser" "typescript" ];
+                command = "prettier";
+                args = [
+                  "--parser"
+                  "typescript"
+                ];
+              };
+            }
+            {
+              name = "solidity";
+              auto-format = true;
+              formatter = {
+                command = "prettier";
+                args = [
+                  "--parser"
+                  "solidity-parse"
+                  "--plugin"
+                  "prettier-plugin-solidity"
+                ];
               };
             }
           ];
@@ -149,19 +201,24 @@
           language-server = {
             rust-analyzer = {
               config = {
-                cargo = { allFeatures = true; };
-                check = { command = "clippy"; };
+                cargo = {
+                  allFeatures = true;
+                };
+                check = {
+                  command = "clippy";
+                };
                 procMacro = {
                   enable = false;
                   ignored = { };
                 };
-                diagnostics = { disabled = [ "macro-error" ]; };
+                diagnostics = {
+                  disabled = [ "macro-error" ];
+                };
               };
             };
 
             typescript-language-server = {
-              command =
-                "${pkgs.typescript-language-server}/bin/typescript-language-server";
+              command = "typescript-language-server";
               config.documentFormatting = false;
             };
           };
