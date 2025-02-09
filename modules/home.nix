@@ -49,7 +49,7 @@
       programs.git.extraConfig = whois.git.extraConfig;
 
       home.file.".config/ghostty/config".text = ''
-        font-size = 12
+        font-size = 13
         background = 282828
         foreground = dedede
         keybind = cmd+d=new_split:right
@@ -182,6 +182,23 @@
                   "typescript"
                 ];
               };
+              language-servers = [
+                "typescript-language-server"
+              ];
+            }
+            {
+              name = "tsx";
+              auto-format = true;
+              formatter = {
+                command = "prettier";
+                args = [
+                  "--parser"
+                  "typescript"
+                ];
+              };
+              language-servers = [
+                "typescript-language-server"
+              ];
             }
             {
               name = "solidity";
