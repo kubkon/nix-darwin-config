@@ -202,7 +202,7 @@
             }
             {
               name = "solidity";
-              auto-format = true;
+              auto-format = false;
               formatter = {
                 command = "prettier";
                 args = [
@@ -212,6 +212,10 @@
                   "prettier-plugin-solidity"
                 ];
               };
+            }
+            {
+              name = "python";
+              auto-format = true;
             }
           ];
 
@@ -237,6 +241,14 @@
             typescript-language-server = {
               command = "typescript-language-server";
               config.documentFormatting = false;
+            };
+
+            pylsp = {
+              command = "pylsp";
+              config.pylsp = {
+                plugins.ruff.enabled = true;
+                plugins.black.enable = true;
+              };
             };
           };
         };
