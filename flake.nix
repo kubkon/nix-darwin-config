@@ -63,10 +63,6 @@
             pkgs.helix
           ];
 
-          # Auto upgrade nix package and the daemon service.
-          services.nix-daemon.enable = true;
-          # nix.package = pkgs.nix;
-
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
 
@@ -101,7 +97,7 @@
           # The platform the configuration will be used on.
           nixpkgs.hostPlatform = "aarch64-darwin";
 
-          security.pam.enableSudoTouchIdAuth = true;
+          security.pam.services.sudo_local.touchIdAuth = true;
         };
 
       programs.ssh.enable = true;
@@ -114,8 +110,6 @@
         system = "aarch64-darwin";
         modules = [
           configuration
-          nixvim.nixDarwinModules.nixvim
-          (import ./modules/nvim.nix)
           home-manager.darwinModules.home-manager
           (import ./modules/home.nix)
         ];

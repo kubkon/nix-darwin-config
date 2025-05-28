@@ -59,6 +59,69 @@
         keybind = cmd+shift+right_bracket=next_tab
       '';
 
+      programs.zed-editor = {
+        enable = true;
+
+        extensions = [
+          "nix"
+          "toml"
+        ];
+
+        userSettings = {
+          vim_mode = true;
+          vim = {
+            default_mode = "helix_normal";
+          };
+          load_direnv = "shell_hook";
+          ui_font_size = 13;
+          buffer_font_size = 16;
+
+          lsp = {
+            rust-analyzer = {
+              initialization_options = {
+                inlayHints = {
+                  maxLength = null;
+                  lifetimeElisionHints = {
+                    enable = "skip_trivial";
+                    useParameterNames = true;
+                  };
+                  closureReturnTypeHints = {
+                    enable = "always";
+                  };
+                };
+
+                checkOnSave = true;
+                cargo = {
+                  allTargets = true;
+                };
+                check = {
+                  workspace = true;
+                };
+              };
+            };
+          };
+
+          assistant = {
+            enabled = true;
+            version = "2";
+            default_open_ai_model = null;
+            default_model = {
+              provider = "zed.dev";
+              model = "claude-3-5-sonnet-latest";
+            };
+          };
+        };
+
+        userKeymaps = [
+          {
+            context = "Workspace";
+            bindings = {
+              "space f" = "file_finder::Toggle";
+            };
+          }
+        ];
+      };
+
       programs.helix = {
         enable = true;
         defaultEditor = true;
