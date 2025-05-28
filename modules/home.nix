@@ -77,6 +77,8 @@
             show = "never";
           };
           load_direnv = "shell_hook";
+          ui_font_size = 13;
+          buffer_font_size = 13;
 
           inlay_hints = {
             enabled = true;
