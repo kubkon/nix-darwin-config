@@ -72,9 +72,10 @@
           vim = {
             default_mode = "helix_normal";
           };
+          scrollbar = {
+            show = "never";
+          };
           load_direnv = "shell_hook";
-          ui_font_size = 13;
-          buffer_font_size = 16;
 
           lsp = {
             rust-analyzer = {
