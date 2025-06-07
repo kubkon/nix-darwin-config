@@ -65,6 +65,7 @@
         extensions = [
           "nix"
           "toml"
+          "zig"
         ];
 
         userSettings = {
@@ -77,7 +78,23 @@
           };
           load_direnv = "shell_hook";
 
+          inlay_hints = {
+            enabled = true;
+          };
+
+          languages = {
+            zig = {
+              format_on_save = "language_server";
+              language_servers = [ "zls" ];
+            };
+          };
+
           lsp = {
+            zls = {
+              settings = {
+                enable_build_on_save = true;
+              };
+            };
             rust-analyzer = {
               initialization_options = {
                 inlayHints = {

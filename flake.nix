@@ -43,7 +43,7 @@
           user.signingkey = "~/.ssh/id_ed25519_sk.pub";
         };
       };
-      whois = zkkubkon;
+      whois = byakuya;
 
       configuration =
         { pkgs, ... }:
