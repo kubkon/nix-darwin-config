@@ -30,6 +30,7 @@
           user.signingkey = "DCEE0CE2EE812D32942750663AEF55DD984C8344";
         };
       };
+
       zkkubkon = {
         username = "kubkon";
         systemName = "zkkubkon";
@@ -43,7 +44,21 @@
           user.signingkey = "~/.ssh/id_ed25519_sk.pub";
         };
       };
-      whois = byakuya;
+
+      kuchiki = {
+        username = "kubkon";
+        systemName = "Kuchiki";
+        name = "Jakub Konka";
+        email = "kubkon@jakubkonka.com";
+        git.extraConfig = {
+          # Sign all commits
+          commit.gpgsign = true;
+          gpg.format = "ssh";
+          gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
+          user.signingkey = "~/.ssh/id_ecdsa_sk.pub";
+        };
+      };
+      whois = kuchiki;
 
       configuration =
         { pkgs, ... }:
