@@ -77,7 +77,7 @@
             show = "never";
           };
           load_direnv = "shell_hook";
-          ui_font_size = 13;
+          ui_font_size = 15;
           buffer_font_size = 13;
 
           inlay_hints = {
@@ -134,9 +134,10 @@
 
         userKeymaps = [
           {
-            context = "Workspace";
+            context = "VimControl && !menu";
             bindings = {
               "space f" = "file_finder::Toggle";
+              "space /" = "project_symbols::Toggle";
             };
           }
         ];
