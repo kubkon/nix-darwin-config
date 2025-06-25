@@ -77,8 +77,8 @@
             show = "never";
           };
           load_direnv = "shell_hook";
-          ui_font_size = 15;
-          buffer_font_size = 13;
+          ui_font_size = 14;
+          buffer_font_size = 12;
 
           inlay_hints = {
             enabled = true;
@@ -127,7 +127,7 @@
             default_open_ai_model = null;
             default_model = {
               provider = "zed.dev";
-              model = "claude-3-5-sonnet-latest";
+              model = "claude-4-sonnet-latest";
             };
           };
         };
