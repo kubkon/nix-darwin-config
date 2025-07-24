@@ -31,20 +31,6 @@
         };
       };
 
-      zkkubkon = {
-        username = "kubkon";
-        systemName = "zkkubkon";
-        name = "Jakub Konka";
-        email = "jakub@vlayer.xyz";
-        git.extraConfig = {
-          # Sign all commits using ssh key
-          commit.gpgsign = true;
-          gpg.format = "ssh";
-          gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
-          user.signingkey = "~/.ssh/id_ed25519_sk.pub";
-        };
-      };
-
       kuchiki = {
         username = "kubkon";
         systemName = "Kuchiki";
