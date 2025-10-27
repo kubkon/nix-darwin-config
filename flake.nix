@@ -18,6 +18,8 @@
       home-manager,
     }:
     let
+      system = "aarch64-darwin";
+
       byakuya = {
         username = "kubkon";
         systemName = "byakuya";
@@ -44,10 +46,14 @@
           user.signingkey = "~/.ssh/id_ecdsa_sk.pub";
         };
       };
-      whois = kuchiki;
+      whois = byakuya;
 
       configuration =
-        { pkgs, ... }:
+        {
+          pkgs,
+          system,
+          ...
+        }:
         {
           environment.systemPackages = [
             pkgs.fish
@@ -96,7 +102,7 @@
           system.stateVersion = 5;
 
           # The platform the configuration will be used on.
-          nixpkgs.hostPlatform = "aarch64-darwin";
+          nixpkgs.hostPlatform = system;
 
           security.pam.services.sudo_local.touchIdAuth = true;
         };
@@ -108,7 +114,7 @@
       # Build darwin flake using:
       # $ darwin-rebuild build --flake .#main
       darwinConfigurations."${whois.systemName}" = nix-darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
+        system = system;
         modules = [
           configuration
           home-manager.darwinModules.home-manager
@@ -119,6 +125,7 @@
             whois
             inputs
             self
+            system
             ;
         };
       };

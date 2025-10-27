@@ -48,6 +48,16 @@
       };
       programs.git.extraConfig = whois.git.extraConfig;
 
+      programs.jujutsu = {
+        enable = true;
+        settings = {
+          user = {
+            email = "${whois.email}";
+            name = "${whois.name}";
+          };
+        };
+      };
+
       home.file.".config/ghostty/config".text = ''
         font-size = 13
         background = 282828
@@ -60,7 +70,7 @@
       '';
 
       programs.zed-editor = {
-        enable = true;
+        enable = false;
 
         extensions = [
           "nix"
@@ -70,8 +80,9 @@
 
         userSettings = {
           vim_mode = true;
+          helix_mode = true;
           vim = {
-            default_mode = "helix_normal";
+            default_mode = "normal";
           };
           scrollbar = {
             show = "never";
@@ -137,7 +148,7 @@
             context = "VimControl && !menu";
             bindings = {
               "space f" = "file_finder::Toggle";
-              "space /" = "project_symbols::Toggle";
+              "space /" = "pane::DeploySearch";
             };
           }
         ];
@@ -150,6 +161,9 @@
         settings = {
           theme = "tokyonight";
           editor = {
+            soft-wrap = {
+              enable = true;
+            };
             cursor-shape = {
               normal = "block";
               insert = "bar";
