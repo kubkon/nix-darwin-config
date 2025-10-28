@@ -54,6 +54,7 @@
           user = {
             email = "${whois.email}";
             name = "${whois.name}";
+            ui.paginate = "never";
           };
         };
       };
