@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-stable,
   lib,
   whois,
   ...
@@ -11,6 +12,10 @@
     users.kubkon = {
       home.username = "${whois.username}";
       home.stateVersion = "24.11";
+      home.sessionPath = [
+        "/Users/${whois.username}/.local/bin"
+        "${pkgs.darwin.xcode_16_4}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+      ];
 
       programs.direnv.enable = true;
       programs.direnv.nix-direnv.enable = true;
@@ -36,7 +41,7 @@
       programs.ssh = {
         enable = true;
         extraConfig = lib.mkBefore ''
-          PKCS11Provider=${pkgs.yubico-piv-tool}/lib/libykcs11.dylib
+          PKCS11Provider=${pkgs-stable.yubico-piv-tool}/lib/libykcs11.dylib
         '';
       };
 
@@ -50,6 +55,15 @@
 
       programs.jujutsu = {
         enable = true;
+        # cargo-nextest fails to build on macOS, so skip tests until resolved:
+        # https://github.com/NixOS/nixpkgs/issues/456113
+        package = pkgs.jujutsu.override {
+          rustPlatform = pkgs.rustPlatform // {
+            buildRustPackage = pkgs.rustPlatform.buildRustPackage.override {
+              cargoNextestHook = null;
+            };
+          };
+        };
         settings = {
           user = {
             email = "${whois.email}";

@@ -3,9 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-darwin.url = "github:LnL7/nix-darwin";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    nixvim.url = "github:nix-community/nixvim";
     home-manager.url = "github:nix-community/home-manager/master";
   };
 
@@ -14,7 +14,7 @@
       self,
       nix-darwin,
       nixpkgs,
-      nixvim,
+      nixpkgs-stable,
       home-manager,
     }:
     let
@@ -46,28 +46,37 @@
           user.signingkey = "~/.ssh/id_ecdsa_sk.pub";
         };
       };
-      whois = byakuya;
+
+      kyoraku = kuchiki // {
+        systemName = "kyoraku";
+      };
+
+      whois = kyoraku;
 
       configuration =
         {
           pkgs,
+          pkgs-stable,
           system,
           ...
         }:
         {
           environment.systemPackages = [
             pkgs.fish
-            pkgs.yubico-piv-tool
+            pkgs-stable.yubico-piv-tool
             pkgs.ripgrep
             pkgs.rustfmt
             pkgs.tree
             pkgs.bloaty
             pkgs.pstree
-            pkgs.openssh
+            pkgs-stable.openssh
             pkgs.fzf
             pkgs.grc
             pkgs.git
             pkgs.helix
+            pkgs.slack
+            pkgs.discord
+            pkgs.darwin.xcode_16_4
           ];
 
           # Necessary for using flakes on this system.
@@ -99,7 +108,7 @@
 
           # Used for backwards compatibility, please read the changelog before changing.
           # $ darwin-rebuild changelog
-          system.stateVersion = 5;
+          system.stateVersion = 6;
 
           # The platform the configuration will be used on.
           nixpkgs.hostPlatform = system;
@@ -112,7 +121,7 @@
     in
     {
       # Build darwin flake using:
-      # $ darwin-rebuild build --flake .#main
+      # $ darwin-rebuild build --flake .#${whois.systemName}
       darwinConfigurations."${whois.systemName}" = nix-darwin.lib.darwinSystem {
         system = system;
         modules = [
@@ -121,6 +130,9 @@
           (import ./modules/home.nix)
         ];
         specialArgs = {
+          pkgs-stable = import nixpkgs-stable {
+            inherit system;
+          };
           inherit
             whois
             inputs
@@ -129,8 +141,5 @@
             ;
         };
       };
-
-      # Expose the package set, including overlays, for convenience.
-      darwinPackages = self.darwinConfigurations."simple".pkgs;
     };
 }
