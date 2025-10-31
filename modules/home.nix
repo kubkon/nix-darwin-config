@@ -48,10 +48,15 @@
       programs.git = {
         enable = true;
         ignores = [ ".swp" ];
-        userEmail = "${whois.email}";
-        userName = "${whois.name}";
+        settings = {
+          user = {
+            email = "${whois.email}";
+            name = "${whois.name}";
+
+          };
+        };
+        extraConfig = whois.git.extraConfig;
       };
-      programs.git.extraConfig = whois.git.extraConfig;
 
       programs.jujutsu = {
         enable = true;
@@ -68,8 +73,8 @@
           user = {
             email = "${whois.email}";
             name = "${whois.name}";
-            ui.paginate = "never";
           };
+          ui.paginate = "never";
         };
       };
 
