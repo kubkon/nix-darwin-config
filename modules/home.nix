@@ -74,7 +74,10 @@
             email = "${whois.email}";
             name = "${whois.name}";
           };
-          ui.paginate = "never";
+        };
+        ui = {
+          editor = "zed --wait";
+          paginate = "never";
         };
       };
 
