@@ -55,7 +55,21 @@
 
           };
         };
-        extraConfig = whois.git.extraConfig;
+        extraConfig =
+          if builtins.hasAttr "gpg" whois.commitSigner then
+            {
+              gpg.format = "opengpg";
+              user.signingKey = whois.commitSigner.gpg.signingKey;
+            }
+          else
+            {
+              gpg.format = "ssh";
+              gpg.ssh.allowedSignersFile = whois.commitSigner.ssh.allowedSignersFile;
+              user.signingKey = whois.commitSigner.ssh.signingKey;
+            }
+            // {
+              commit.gpgsign = true;
+            };
       };
 
       programs.jujutsu = {
@@ -74,6 +88,22 @@
             email = "${whois.email}";
             name = "${whois.name}";
           };
+          signing =
+            if builtins.hasAttr "gpg" whois.commitSigner then
+              {
+                backend = "gpg";
+                key = whois.commitSigner.gpg.signingKey;
+              }
+            else
+              {
+                backend = "ssh";
+                key = whois.commitSigner.ssh.signingKey;
+                backends.ssh.allowed-signers = whois.commitSigner.ssh.allowedSignersFile;
+              }
+              // {
+                behavior = "own";
+              };
+
           ui = {
             editor = "zed --wait";
             paginate = "never";

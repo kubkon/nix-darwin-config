@@ -25,11 +25,8 @@
         systemName = "byakuya";
         name = "Jakub Konka";
         email = "kubkon@jakubkonka.com";
-        git.extraConfig = {
-          # Sign all commits
-          commit.gpgsign = true;
-          gpg.format = "openpgp";
-          user.signingkey = "DCEE0CE2EE812D32942750663AEF55DD984C8344";
+        commitSigner.gpg = {
+          signingkey = "DCEE0CE2EE812D32942750663AEF55DD984C8344";
         };
       };
 
@@ -38,12 +35,9 @@
         systemName = "Kuchiki";
         name = "Jakub Konka";
         email = "kubkon@jakubkonka.com";
-        git.extraConfig = {
-          # Sign all commits
-          commit.gpgsign = true;
-          gpg.format = "ssh";
-          gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
-          user.signingkey = "~/.ssh/id_ecdsa_sk.pub";
+        commitSigner.ssh = {
+          signingKey = "~/.ssh/id_ecdsa_sk.pub";
+          allowedSignersFile = "~/.ssh/allowed_signers";
         };
       };
 
