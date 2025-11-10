@@ -26,7 +26,7 @@
         name = "Jakub Konka";
         email = "kubkon@jakubkonka.com";
         commitSigner.gpg = {
-          signingkey = "DCEE0CE2EE812D32942750663AEF55DD984C8344";
+          signingKey = "DCEE0CE2EE812D32942750663AEF55DD984C8344";
         };
       };
 
@@ -45,13 +45,14 @@
         systemName = "kyoraku";
       };
 
-      whois = kyoraku;
+      whois = byakuya;
 
       configuration =
         {
           pkgs,
           pkgs-stable,
           system,
+          lib,
           ...
         }:
         {
@@ -70,6 +71,8 @@
             pkgs.helix
             pkgs.slack
             pkgs.discord
+          ]
+          ++ lib.optionals (whois.username == "kyoraku") [
             pkgs.darwin.xcode_16_4
           ];
 

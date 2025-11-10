@@ -14,6 +14,8 @@
       home.stateVersion = "24.11";
       home.sessionPath = [
         "/Users/${whois.username}/.local/bin"
+      ]
+      ++ lib.optionals (whois.username == "kyoraku") [
         "${pkgs.darwin.xcode_16_4}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
       ];
 
