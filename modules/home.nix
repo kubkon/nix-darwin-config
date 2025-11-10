@@ -58,20 +58,22 @@
           };
         };
         extraConfig =
-          if builtins.hasAttr "gpg" whois.commitSigner then
-            {
-              gpg.format = "opengpg";
-              user.signingKey = whois.commitSigner.gpg.signingKey;
-            }
-          else
-            {
-              gpg.format = "ssh";
-              gpg.ssh.allowedSignersFile = whois.commitSigner.ssh.allowedSignersFile;
-              user.signingKey = whois.commitSigner.ssh.signingKey;
-            }
-            // {
-              commit.gpgsign = true;
-            };
+          (
+            if builtins.hasAttr "gpg" whois.commitSigner then
+              {
+                gpg.format = "openpgp";
+                user.signingKey = whois.commitSigner.gpg.signingKey;
+              }
+            else
+              {
+                gpg.format = "ssh";
+                gpg.ssh.allowedSignersFile = whois.commitSigner.ssh.allowedSignersFile;
+                user.signingKey = whois.commitSigner.ssh.signingKey;
+              }
+          )
+          // {
+            commit.gpgsign = true;
+          };
       };
 
       programs.jujutsu = {
