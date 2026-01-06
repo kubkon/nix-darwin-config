@@ -9,6 +9,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+
     users.kubkon = {
       home.username = "${whois.username}";
       home.stateVersion = "24.11";
@@ -18,6 +19,13 @@
       ++ lib.optionals (whois.username == "kyoraku") [
         "${pkgs.darwin.xcode_16_4}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
       ];
+
+      programs.gpg.enable = true;
+      services.gpg-agent = {
+        enable = true;
+        enableFishIntegration = true;
+        pinentry.program = "${pkgs.pinentry-tty}";
+      };
 
       programs.direnv.enable = true;
       programs.direnv.nix-direnv.enable = true;
@@ -125,91 +133,6 @@
         keybind = cmd+shift+left_bracket=previous_tab
         keybind = cmd+shift+right_bracket=next_tab
       '';
-
-      programs.zed-editor = {
-        enable = false;
-
-        extensions = [
-          "nix"
-          "toml"
-          "zig"
-        ];
-
-        userSettings = {
-          vim_mode = true;
-          helix_mode = true;
-          vim = {
-            default_mode = "normal";
-          };
-          scrollbar = {
-            show = "never";
-          };
-          load_direnv = "shell_hook";
-          ui_font_size = 14;
-          buffer_font_size = 12;
-
-          inlay_hints = {
-            enabled = true;
-          };
-
-          languages = {
-            zig = {
-              format_on_save = "language_server";
-              language_servers = [ "zls" ];
-            };
-          };
-
-          lsp = {
-            zls = {
-              settings = {
-                enable_build_on_save = true;
-              };
-            };
-            rust-analyzer = {
-              initialization_options = {
-                inlayHints = {
-                  maxLength = null;
-                  lifetimeElisionHints = {
-                    enable = "skip_trivial";
-                    useParameterNames = true;
-                  };
-                  closureReturnTypeHints = {
-                    enable = "always";
-                  };
-                };
-
-                checkOnSave = true;
-                cargo = {
-                  allTargets = true;
-                };
-                check = {
-                  workspace = true;
-                };
-              };
-            };
-          };
-
-          assistant = {
-            enabled = true;
-            version = "2";
-            default_open_ai_model = null;
-            default_model = {
-              provider = "zed.dev";
-              model = "claude-4-sonnet-latest";
-            };
-          };
-        };
-
-        userKeymaps = [
-          {
-            context = "VimControl && !menu";
-            bindings = {
-              "space f" = "file_finder::Toggle";
-              "space /" = "pane::DeploySearch";
-            };
-          }
-        ];
-      };
 
       programs.helix = {
         enable = true;
