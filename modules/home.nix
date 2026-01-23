@@ -105,17 +105,18 @@
               {
                 backend = "gpg";
                 key = whois.commitSigner.gpg.signingKey;
+                behavior = "own";
               }
             else
               {
                 backend = "ssh";
                 key = whois.commitSigner.ssh.signingKey;
                 backends.ssh.allowed-signers = whois.commitSigner.ssh.allowedSignersFile;
-              }
-              // {
-                behavior = "own";
+                behavior = "drop";
               };
-
+          git = lib.attrsets.optionalAttrs (builtins.hasAttr "ssh" whois.commitSigner) {
+            sign-on-push = true;
+          };
           ui = {
             editor = "zed --wait";
             paginate = "never";
