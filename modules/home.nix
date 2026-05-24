@@ -16,7 +16,7 @@
       home.sessionPath = [
         "/Users/${whois.username}/.local/bin"
       ]
-      ++ lib.optionals (whois.username == "kyoraku") [
+      ++ lib.optionals ("${whois.systemName}" == "kyoraku") [
         "${pkgs.darwin.xcode_16_4}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
       ];
 
@@ -119,7 +119,6 @@
           };
           ui = {
             editor = "zed --wait";
-            paginate = "never";
           };
         };
       };

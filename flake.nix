@@ -7,6 +7,7 @@
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager/master";
+    tracy.url = "github:kubkon/tracy.nix";
   };
 
   outputs =
@@ -16,6 +17,7 @@
       nixpkgs,
       nixpkgs-stable,
       home-manager,
+      tracy,
     }:
     let
       system = "aarch64-darwin";
@@ -45,7 +47,7 @@
         systemName = "kyoraku";
       };
 
-      whois = byakuya;
+      whois = kyoraku;
 
       configuration =
         {
@@ -57,6 +59,7 @@
         }:
         {
           environment.systemPackages = [
+            tracy.packages.${system}.default
             pkgs.fish
             pkgs-stable.yubico-piv-tool
             pkgs.ripgrep
@@ -72,8 +75,14 @@
             pkgs.slack
             pkgs.discord
           ]
-          ++ lib.optionals (whois.username == "kyoraku") [
+          ++ lib.optionals (whois.systemName == "kyoraku") [
             pkgs.darwin.xcode_16_4
+            pkgs.gh
+            pkgs.claude-code
+            pkgs.ffmpeg
+            pkgs.python3
+            pkgs.nil
+            pkgs.nixd
           ];
 
           # Necessary for using flakes on this system.
