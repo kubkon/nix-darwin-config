@@ -15,6 +15,7 @@
       home.stateVersion = "24.11";
       home.sessionPath = [
         "/Users/${whois.username}/.local/bin"
+        "/Users/${whois.username}/go/bin"
       ]
       ++ lib.optionals ("${whois.systemName}" == "kyoraku") [
         "${pkgs.darwin.xcode_16_4}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
@@ -118,7 +119,7 @@
             sign-on-push = true;
           };
           ui = {
-            editor = "zed --wait";
+            editor = "hx";
           };
         };
       };

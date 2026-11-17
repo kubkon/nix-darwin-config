@@ -74,9 +74,11 @@
             pkgs.helix
             pkgs.slack
             pkgs.discord
+            pkgs.scroll-reverser
+            pkgs.sentry-cli
           ]
           ++ lib.optionals (whois.systemName == "kyoraku") [
-            pkgs.darwin.xcode_16_4
+            pkgs.darwin.xcode_26_6_Apple_silicon
             pkgs.gh
             pkgs.claude-code
             pkgs.ffmpeg
