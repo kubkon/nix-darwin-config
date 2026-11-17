@@ -38,7 +38,6 @@
         name = "Jakub Konka";
         email = "kubkon@jakubkonka.com";
         commitSigner.ssh = {
-          signingKey = "~/.ssh/id_ecdsa_sk.pub";
           allowedSignersFile = "~/.ssh/allowed_signers";
         };
       };

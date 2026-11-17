@@ -5,6 +5,53 @@
   whois,
   ...
 }:
+let
+  # Signing uses whichever YubiKey is plugged in: yubikey-agent only lists the
+  # PIV key of the connected device, so no public key lives in this config.
+  # Matches the socket of Home Manager's services.yubikey-agent on macOS.
+  yubikeyAgentSock = "/tmp/yubikey-agent.sock";
+
+  # git: prints the agent's current key for gpg.ssh.defaultKeyCommand.
+  yubikeySigningKey = pkgs.writeShellApplication {
+    name = "yubikey-signing-key";
+    runtimeInputs = [ pkgs.openssh ];
+    text = ''
+      export SSH_AUTH_SOCK=${yubikeyAgentSock}
+      if ! keys=$(ssh-add -L); then
+        echo "yubikey-agent has no key; is a YubiKey plugged in?" >&2
+        exit 1
+      fi
+      printf 'key::%s\n' "''${keys%%$'\n'*}"
+    '';
+  };
+
+  # jj: it requires signing.key, so it gets a placeholder and this ssh-keygen
+  # wrapper replaces `-f <key>` on `-Y sign` with the agent's current key.
+  # Every other invocation (verify, find-principals, ...) passes through.
+  yubikeySshKeygen = pkgs.writeShellApplication {
+    name = "yubikey-ssh-keygen";
+    runtimeInputs = [ pkgs.openssh ];
+    text = ''
+      export SSH_AUTH_SOCK=${yubikeyAgentSock}
+      args=("$@")
+      sign=0
+      for ((i = 0; i + 1 < ''${#args[@]}; i++)); do
+        [ "''${args[i]}" = -Y ] && [ "''${args[i + 1]}" = sign ] && sign=1
+      done
+      if [ "$sign" -eq 0 ]; then
+        exec ssh-keygen "$@"
+      fi
+
+      keyfile=$(mktemp)
+      trap 'rm -f "$keyfile"' EXIT
+      ${lib.getExe yubikeySigningKey} | sed 's/^key:://' >"$keyfile"
+      for ((i = 0; i + 1 < ''${#args[@]}; i++)); do
+        [ "''${args[i]}" = -f ] && args[i + 1]=$keyfile
+      done
+      ssh-keygen "''${args[@]}"
+    '';
+  };
+in
 {
   home-manager = {
     useGlobalPkgs = true;
@@ -18,15 +65,21 @@
         "/Users/${whois.username}/go/bin"
       ]
       ++ lib.optionals ("${whois.systemName}" == "kyoraku") [
-        "${pkgs.darwin.xcode_16_4}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+        "${pkgs.darwin.xcode_26_6_Apple_silicon}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
       ];
 
       programs.gpg.enable = true;
       services.gpg-agent = {
         enable = true;
         enableFishIntegration = true;
-        pinentry.program = "${pkgs.pinentry-tty}";
+        # Also yubikey-agent's PIN prompt: it reads pinentry-program from
+        # gpg-agent.conf, and as a launchd agent it has no terminal to use.
+        pinentry.package = pkgs.pinentry_mac;
       };
+
+      # PIV key on the YubiKey for SSH logins and SSH commit signing. The agent
+      # asks for the PIN once and keeps it until the YubiKey is unplugged.
+      services.yubikey-agent.enable = true;
 
       programs.direnv.enable = true;
       programs.direnv.nix-direnv.enable = true;
@@ -51,9 +104,9 @@
 
       programs.ssh = {
         enable = true;
-        extraConfig = lib.mkBefore ''
-          PKCS11Provider=${pkgs-stable.yubico-piv-tool}/lib/libykcs11.dylib
-        '';
+        # GUI apps get SSH_AUTH_SOCK from launchd (Apple's agent), not from the
+        # shell, so point ssh itself at yubikey-agent too.
+        matchBlocks."*".identityAgent = yubikeyAgentSock;
       };
 
       programs.git = {
@@ -77,7 +130,7 @@
               {
                 gpg.format = "ssh";
                 gpg.ssh.allowedSignersFile = whois.commitSigner.ssh.allowedSignersFile;
-                user.signingKey = whois.commitSigner.ssh.signingKey;
+                gpg.ssh.defaultKeyCommand = lib.getExe yubikeySigningKey;
               }
           )
           // {
@@ -111,8 +164,11 @@
             else
               {
                 backend = "ssh";
-                key = whois.commitSigner.ssh.signingKey;
-                backends.ssh.allowed-signers = whois.commitSigner.ssh.allowedSignersFile;
+                key = "yubikey-agent"; # placeholder, see yubikeySshKeygen
+                backends.ssh = {
+                  allowed-signers = whois.commitSigner.ssh.allowedSignersFile;
+                  program = lib.getExe yubikeySshKeygen;
+                };
                 behavior = "drop";
               };
           git = lib.attrsets.optionalAttrs (builtins.hasAttr "ssh" whois.commitSigner) {
