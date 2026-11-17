@@ -65,7 +65,7 @@ in
         "/Users/${whois.username}/go/bin"
       ]
       ++ lib.optionals ("${whois.systemName}" == "kyoraku") [
-        "${pkgs.darwin.xcode_16_4}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+        "${pkgs.darwin.xcode_26_6_Apple_silicon}/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
       ];
 
       programs.gpg.enable = true;
